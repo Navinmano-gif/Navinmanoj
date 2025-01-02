@@ -1,47 +1,32 @@
-"""
-URL configuration for company project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
-from django.contrib import admin
-from django.urls import path, include
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .views import RoleViewSet
+from .views import OrganizationViewSet, RoleViewSet, UserViewSet
+from django.contrib import admin
 
-from rest_framework import viewsets,permissions
-from rest_framework_simplejwt import views as jwt_views
-
-from onedata.views import OrganizationViewSet, RoleViewSet, UserViewSet
-
-
+router = DefaultRouter()
+router.register(r'organizations', OrganizationViewSet)
+router.register(r'roles', RoleViewSet)
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('onedata.urls')),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include(router.urls)),
 ]
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
+
+# Create a router and register the RoleViewSet
 router = DefaultRouter()
-router.register(r'organizations', OrganizationViewSet, basename='organization');
-router.register(r'roles', RoleViewSet, basename='roles')
-router.register(r'user', UserViewSet, basename='user');
-
-
+router.register(r'roles', RoleViewSet, basename='role')
 
 urlpatterns = [
     path('', include(router.urls)),  # Include the router URLs
 ]
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
 
+urlpatterns = [
+    path('', include(router.urls)),  # Include the router URLs
+]
